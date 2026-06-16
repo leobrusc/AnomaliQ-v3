@@ -1,0 +1,16 @@
+{
+  "backend": "qiskit_algorithms+qiskit_aer",
+  "config_path": "configs/synthetic.yaml",
+  "dataset": "synthetic",
+  "experiment_id": "run-20260616T160447Z",
+  "feature_map": [
+    "zz",
+    "pauli"
+  ],
+  "git_commit_hash": "6ef086b0ebd72362a70f2d66a2b72ff54be5a04c",
+  "n_qubits": 4,
+  "optimizer": "COBYLA",
+  "output_dir": "results\\synthetic\\run-20260616T160447Z",
+  "seed": 42,
+  "timestamp": "2026-06-16T16:04:47.319155+00:00"
+}

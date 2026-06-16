@@ -1,0 +1,5 @@
+noise_level,f1,f1_degradation_under_noise,simulator,n_qubits,circuit_depth,cx_count
+0.0,0.9411764705882353,0.0,qiskit_aer_noise_model,4,19,12
+0.05,0.9411764705882353,0.0,qiskit_aer_noise_model,4,19,12
+0.15,0.7272727272727273,0.213903743315508,qiskit_aer_noise_model,4,19,12
+0.3,0.7272727272727273,0.213903743315508,qiskit_aer_noise_model,4,19,12
