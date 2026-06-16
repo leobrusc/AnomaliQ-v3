@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from src.evaluation.reports import append_rows
-from src.experiments.common import finish, load_config, output_dir, parse_args, reset_outputs, run_and_record
+from src.experiments.common import finish, load_and_initialize, output_dir, parse_args, reset_outputs, run_and_record
 from src.quantum.nisq_noise import benchmark_noise
 
 
 def main():
     args = parse_args()
-    config = load_config(args.config)
+    config = load_and_initialize(args)
     out = output_dir(config)
     reset_outputs(out)
     warnings = []

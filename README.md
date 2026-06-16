@@ -27,6 +27,7 @@ Dependências opcionais (`qiskit-algorithms`, `qiskit-aer`, `xgboost`, `torch`) 
 
 ```powershell
 python -m src.experiments.run_all --config configs/synthetic.yaml
+python -m src.experiments.run_all --config configs/synthetic.yaml --experiment-name synthetic-smoke
 python -m src.experiments.run_baselines --config configs/synthetic.yaml
 python -m src.experiments.run_qsvm --config configs/synthetic.yaml
 python -m src.experiments.run_vqc --config configs/synthetic.yaml
@@ -35,7 +36,36 @@ python -m src.experiments.run_qaoa --config configs/synthetic.yaml
 python -m src.experiments.run_falqon --config configs/synthetic.yaml
 ```
 
-Use `--reset` nos runners isolados para limpar `metrics.csv`, `failures.csv` e `summary.md` antes de uma execução.
+Use `--experiment-name` para prefixar o identificador da execução. Cada execução recebe um sufixo UTC e escreve em um diretório próprio, evitando sobrescrever resultados anteriores.
+
+## Reprodutibilidade e tracking
+
+Os runners criam automaticamente uma árvore de resultados por dataset e execução:
+
+```text
+results/
+  synthetic/
+    synthetic-smoke-20260616T120000Z/
+      metrics.csv
+      summary.md
+      config_snapshot.yaml
+      experiment_manifest.json
+      plots/
+      artifacts/
+```
+
+O `experiment_manifest.json` registra:
+
+- hash do commit Git;
+- dataset;
+- seed;
+- número de qubits;
+- feature map configurado;
+- otimizador;
+- timestamp UTC;
+- backend detectado.
+
+O `config_snapshot.yaml` salva uma cópia da configuração usada na execução. Isso permite comparar resultados mesmo quando os arquivos em `configs/` forem alterados depois.
 
 ## Dataset CICIDS2017
 
@@ -49,15 +79,17 @@ Os arquivos devem conter uma coluna `Label` com valores `BENIGN` e `DDoS`. Se os
 
 ## Saídas
 
-- `results/metrics.csv`: métricas de classificação, mitigação e NISQ.
-- `results/failures.csv`: experimentos pulados ou quebrados por dependência ausente.
-- `results/summary.md`: relatório automático com limitações.
-- `results/plots/f1_comparison.png`
-- `results/plots/roc_auc_comparison.png`
-- `results/plots/vqc_convergence.png`
-- `results/plots/confusion_matrix.png`
-- `results/plots/nisq_noise_degradation.png`
-- `results/plots/falqon_drift.png`
+- `results/<dataset>/<experiment_id>/metrics.csv`: métricas de classificação, mitigação e NISQ.
+- `results/<dataset>/<experiment_id>/failures.csv`: experimentos pulados ou quebrados por dependência ausente, quando houver falhas.
+- `results/<dataset>/<experiment_id>/summary.md`: relatório automático com limitações.
+- `results/<dataset>/<experiment_id>/config_snapshot.yaml`: configuração congelada.
+- `results/<dataset>/<experiment_id>/experiment_manifest.json`: manifesto de reprodutibilidade.
+- `results/<dataset>/<experiment_id>/plots/f1_comparison.png`
+- `results/<dataset>/<experiment_id>/plots/roc_auc_comparison.png`
+- `results/<dataset>/<experiment_id>/plots/vqc_convergence.png`
+- `results/<dataset>/<experiment_id>/plots/confusion_matrix.png`
+- `results/<dataset>/<experiment_id>/plots/nisq_noise_degradation.png`
+- `results/<dataset>/<experiment_id>/plots/falqon_drift.png`
 
 ## Estrutura
 

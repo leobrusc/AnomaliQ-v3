@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from src.evaluation.reports import append_rows
-from src.experiments.common import finish, load_config, output_dir, parse_args, prepared_classical, reset_outputs
+from src.experiments.common import finish, load_and_initialize, output_dir, parse_args, prepared_classical, reset_outputs
 from src.quantum.falqon_drift import run_falqon_drift
 
 
@@ -13,7 +13,7 @@ def run(config: dict):
 
 def main():
     args = parse_args()
-    config = load_config(args.config)
+    config = load_and_initialize(args)
     out = output_dir(config)
     if args.reset:
         reset_outputs(out)

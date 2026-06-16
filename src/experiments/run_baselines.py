@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from src.classical.autoencoder import run_classical_autoencoder
 from src.classical.baselines import run_classical_baselines
-from src.experiments.common import finish, load_config, output_dir, parse_args, prepared_classical, reset_outputs
+from src.experiments.common import finish, load_and_initialize, output_dir, parse_args, prepared_classical, reset_outputs
 
 
 def run(config: dict):
@@ -16,7 +16,7 @@ def run(config: dict):
 
 def main():
     args = parse_args()
-    config = load_config(args.config)
+    config = load_and_initialize(args)
     out = output_dir(config)
     if args.reset:
         reset_outputs(out)

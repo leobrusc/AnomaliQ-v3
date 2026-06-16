@@ -1,0 +1,25 @@
+seed: 42
+dataset:
+  mode: synthetic
+  synthetic:
+    n_samples: 600
+    attack_ratio: 0.35
+preprocessing:
+  test_size: 0.3
+  n_qubits: 4
+  quantum_max_train: 30
+  quantum_max_test: 25
+experiments:
+  output_dir: results
+  alert_threshold: 0.5
+  qsvm_feature_maps:
+  - zz
+  - pauli
+  vqc_maxiter: 25
+  qaoa_nodes: 5
+  falqon_windows: 6
+  noise_levels:
+  - 0.0
+  - 0.05
+  - 0.15
+  - 0.3

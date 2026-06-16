@@ -7,12 +7,14 @@ import yaml
 
 from src.data.preprocessing import limit_quantum_samples, make_splits, reduce_for_quantum, scale_classical
 from src.evaluation.plots import plot_bar, plot_confusion_matrix
+from src.evaluation.reproducibility import initialize_experiment
 from src.evaluation.reports import append_rows, record_failure, write_summary
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="configs/synthetic.yaml")
+    parser.add_argument("--experiment-name", default=None)
     parser.add_argument("--reset", action="store_true")
     return parser.parse_args()
 
@@ -23,10 +25,20 @@ def load_config(path: str) -> dict:
 
 
 def output_dir(config: dict) -> str:
+    if "_experiment" in config:
+        out = config["_experiment"]["output_dir"]
+        Path(out, "plots").mkdir(parents=True, exist_ok=True)
+        Path(out, "artifacts").mkdir(parents=True, exist_ok=True)
+        return out
     out = config.get("experiments", {}).get("output_dir", "results")
     Path(out, "plots").mkdir(parents=True, exist_ok=True)
     Path(out, "artifacts").mkdir(parents=True, exist_ok=True)
     return out
+
+
+def load_and_initialize(args) -> dict:
+    config = load_config(args.config)
+    return initialize_experiment(config, args.config, args.experiment_name)
 
 
 def reset_outputs(out: str):
