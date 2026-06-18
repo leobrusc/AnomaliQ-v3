@@ -70,8 +70,11 @@ def finish(out: str, warnings: list[str] | None = None):
 
         df = pd.read_csv(metrics)
         if not df.empty and "confusion_matrix" in df.columns:
-            best = df.dropna(subset=["f1"]).sort_values("f1", ascending=False).iloc[0].to_dict()
-            plot_confusion_matrix(best, out)
+            candidates = df.dropna(subset=["f1", "confusion_matrix"])
+            candidates = candidates[candidates["confusion_matrix"].astype(str).str.startswith("[[")]
+            if not candidates.empty:
+                best = candidates.sort_values("f1", ascending=False).iloc[0].to_dict()
+                plot_confusion_matrix(best, out)
     write_summary(out, warnings or [])
 
 
