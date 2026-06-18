@@ -53,16 +53,9 @@ def main():
     if not rows:
         return
     all_metrics = pd.concat(rows, ignore_index=True)
-    summary = (
-        all_metrics.groupby("model", dropna=False)
-        .agg(
-            f1_mean=("f1", "mean"),
-            f1_std=("f1", "std"),
-            roc_auc_mean=("roc_auc", "mean"),
-            roc_auc_std=("roc_auc", "std"),
-        )
-        .reset_index()
-    )
+    metric_columns = [col for col in ["accuracy", "precision", "recall", "f1", "roc_auc", "mcc"] if col in all_metrics.columns]
+    summary = all_metrics.groupby("model", dropna=False)[metric_columns].agg(["mean", "std"]).reset_index()
+    summary.columns = ["_".join([part for part in col if part]).strip("_") if isinstance(col, tuple) else col for col in summary.columns]
     out = root / base_config.get("dataset", {}).get("mode", "synthetic") / f"{args.experiment_name}-aggregate"
     out.mkdir(parents=True, exist_ok=True)
     all_metrics.to_csv(out / "multiseed_all_metrics.csv", index=False)

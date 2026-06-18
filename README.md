@@ -105,6 +105,23 @@ python -m src.experiments.run_all --config configs/cicids_ddos_real_strict.yaml 
 
 Se os CSVs não existirem, a execução deve falhar com mensagem clara indicando `data/raw/cicids2017/*.csv`.
 
+Benchmark real multiseed publicável:
+
+```powershell
+python -m src.experiments.run_cicids2017_benchmark --config configs/cicids_ddos_real_strict.yaml --experiment-name cicids2017_real_benchmark --seeds 42 123 2026
+```
+
+Esse runner compara apenas os modelos do protocolo CICIDS2017 real:
+
+- Logistic Regression
+- Random Forest
+- SVM-RBF
+- QSVM-ZZ
+- QSVM-Pauli
+- VQC
+
+As saídas agregadas incluem CSV, Markdown, LaTeX e figuras em `results/cicids2017/cicids2017_real_benchmark-aggregate/`.
+
 ## Dataset UNSW-NB15
 
 Para modo real, coloque os CSVs em:
