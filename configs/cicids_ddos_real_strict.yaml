@@ -10,8 +10,8 @@ dataset:
     label_column: Label
     target_labels: [BENIGN, DDoS]
     max_samples_per_class: 1000
-    require_real_dataset: false
-    fallback_to_synthetic: true
+    require_real_dataset: true
+    fallback_to_synthetic: false
 preprocessing:
   test_size: 0.3
   n_qubits: 4

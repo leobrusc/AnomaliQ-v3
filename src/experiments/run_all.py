@@ -1,13 +1,20 @@
 from __future__ import annotations
 
+import sys
+
 from src.evaluation.reports import append_rows
-from src.experiments.common import finish, load_and_initialize, output_dir, parse_args, reset_outputs, run_and_record
+from src.experiments.common import enforce_required_real_dataset, finish, load_and_initialize, output_dir, parse_args, reset_outputs, run_and_record
 from src.quantum.nisq_noise import benchmark_noise
 
 
 def main():
     args = parse_args()
     config = load_and_initialize(args)
+    try:
+        enforce_required_real_dataset(config)
+    except FileNotFoundError as exc:
+        print(str(exc), file=sys.stderr)
+        raise SystemExit(1) from None
     out = output_dir(config)
     reset_outputs(out)
     warnings = []

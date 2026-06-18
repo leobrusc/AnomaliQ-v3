@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, matthews_corrcoef, precision_score, recall_score, roc_auc_score
 
 
 def classification_metrics(y_true, y_pred, y_score=None) -> dict:
@@ -17,6 +17,7 @@ def classification_metrics(y_true, y_pred, y_score=None) -> dict:
         "recall": recall_score(y_true, y_pred, zero_division=0),
         "f1": f1_score(y_true, y_pred, zero_division=0),
         "roc_auc": roc_auc,
+        "mcc": matthews_corrcoef(y_true, y_pred),
         "confusion_matrix": cm.tolist(),
         "false_positive_rate": fp / max(fp + tn, 1),
         "false_negative_rate": fn / max(fn + tp, 1),

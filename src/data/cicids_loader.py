@@ -11,6 +11,11 @@ CICIDS_HINT = (
     "CICIDS2017 não encontrado. Coloque os CSVs em data/raw/cicids2017/ "
     "com coluna de rótulo Label; o runner usará fallback sintético."
 )
+CICIDS_STRICT_MISSING = (
+    "CICIDS2017 dataset not found.\n"
+    "Expected CSV files under:\n"
+    "data/raw/cicids2017/*.csv"
+)
 
 
 def _standardize_column(name: str) -> str:
@@ -20,12 +25,8 @@ def _standardize_column(name: str) -> str:
 def _limit_per_class(df: pd.DataFrame, max_samples_per_class: int | None, seed: int) -> pd.DataFrame:
     if not max_samples_per_class:
         return df
-    return (
-        df.groupby("label", group_keys=False)
-        .apply(lambda part: part.sample(n=min(len(part), max_samples_per_class), random_state=seed))
-        .sample(frac=1.0, random_state=seed)
-        .reset_index(drop=True)
-    )
+    parts = [part.sample(n=min(len(part), max_samples_per_class), random_state=seed) for _, part in df.groupby("label")]
+    return pd.concat(parts, ignore_index=True).sample(frac=1.0, random_state=seed).reset_index(drop=True)
 
 
 def load_cicids2017_binary(
@@ -36,17 +37,38 @@ def load_cicids2017_binary(
     max_samples_per_class: int | None = None,
     processed_dir: str = "data/processed",
     fallback_to_synthetic: bool = True,
+    require_real_dataset: bool = False,
 ) -> tuple[pd.DataFrame, str | None]:
     path = Path(raw_dir)
-    csvs = sorted(path.glob("*.csv")) if path.exists() else []
+    csvs = sorted(path.rglob("*.csv")) if path.exists() else []
     if not csvs:
+        if require_real_dataset:
+            raise FileNotFoundError(CICIDS_STRICT_MISSING)
         if fallback_to_synthetic:
             return generate_synthetic_http(seed=seed), CICIDS_HINT
-        raise FileNotFoundError(CICIDS_HINT)
+        raise FileNotFoundError(CICIDS_STRICT_MISSING)
 
+    mapping = {
+        "flow_duration": "time_between_req_ms",
+        "total_fwd_packets": "req_per_sec",
+        "total_length_of_fwd_packets": "payload_size_bytes",
+        "flow_bytes_s": "burst_score",
+        "flow_packets_s": "req_per_sec",
+        "bwd_packet_length_mean": "response_time_ms",
+        "fwd_packet_length_mean": "payload_size_bytes",
+        "fwd_iat_mean": "time_between_req_ms",
+        "packet_length_std": "header_entropy",
+        "destination_port": "distinct_endpoints_in_window",
+        "init_win_bytes_forward": "source_ip_diversity",
+    }
     frames = []
+    needed = {_standardize_column(label_column), *mapping.keys()}
     for csv in csvs:
-        frame = pd.read_csv(csv, low_memory=False)
+        header = pd.read_csv(csv, nrows=0, low_memory=False)
+        selected = [col for col in header.columns if _standardize_column(col) in needed]
+        if not selected:
+            continue
+        frame = pd.read_csv(csv, usecols=selected, low_memory=False)
         frame.columns = [_standardize_column(col) for col in frame.columns]
         normalized_label = _standardize_column(label_column)
         if normalized_label in frame.columns:
@@ -65,19 +87,6 @@ def load_cicids2017_binary(
     df = df.loc[mask].copy()
     df["label"] = (labels.loc[mask] != "BENIGN").astype(int)
 
-    mapping = {
-        "flow_duration": "time_between_req_ms",
-        "total_fwd_packets": "req_per_sec",
-        "total_length_of_fwd_packets": "payload_size_bytes",
-        "flow_bytes_s": "burst_score",
-        "flow_packets_s": "req_per_sec",
-        "bwd_packet_length_mean": "response_time_ms",
-        "fwd_packet_length_mean": "payload_size_bytes",
-        "fwd_iat_mean": "time_between_req_ms",
-        "packet_length_std": "header_entropy",
-        "destination_port": "distinct_endpoints_in_window",
-        "init_win_bytes_forward": "source_ip_diversity",
-    }
     for source, target in mapping.items():
         if source in df.columns:
             df[target] = pd.to_numeric(df[source], errors="coerce")

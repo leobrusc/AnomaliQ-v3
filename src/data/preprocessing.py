@@ -26,6 +26,7 @@ def load_dataset(config: dict) -> tuple[pd.DataFrame, list[str]]:
             max_samples_per_class=cicids.get("max_samples_per_class"),
             processed_dir=cicids.get("processed_dir", "data/processed"),
             fallback_to_synthetic=bool(cicids.get("fallback_to_synthetic", True)),
+            require_real_dataset=bool(cicids.get("require_real_dataset", False)),
         )
         if warning:
             warnings.append(warning)
@@ -39,6 +40,7 @@ def load_dataset(config: dict) -> tuple[pd.DataFrame, list[str]]:
             max_samples_per_class=unsw.get("max_samples_per_class"),
             processed_dir=unsw.get("processed_dir", "data/processed"),
             fallback_to_synthetic=bool(unsw.get("fallback_to_synthetic", True)),
+            require_real_dataset=bool(unsw.get("require_real_dataset", False)),
         )
         if warning:
             warnings.append(warning)
