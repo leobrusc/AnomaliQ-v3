@@ -19,6 +19,14 @@ def _format_metric(mean_value, std_value) -> str:
     return f"{mean_value:.4f} ± {std_value:.4f}"
 
 
+def _to_markdown_table(frame: pd.DataFrame) -> str:
+    headers = [str(col) for col in frame.columns]
+    lines = ["| " + " | ".join(headers) + " |", "| " + " | ".join(["---"] * len(headers)) + " |"]
+    for _, row in frame.iterrows():
+        lines.append("| " + " | ".join(str(row[col]) for col in frame.columns) + " |")
+    return "\n".join(lines)
+
+
 def aggregate_publication_metrics(metrics: pd.DataFrame, models: list[str]) -> tuple[pd.DataFrame, pd.DataFrame]:
     data = metrics[metrics["model"].isin(models)].copy()
     data["model"] = pd.Categorical(data["model"], categories=models, ordered=True)
@@ -45,11 +53,7 @@ def write_publication_tables(metrics: pd.DataFrame, output_dir: str, models: lis
     tex_path = out / "cicids2017_publication_table.tex"
     raw.to_csv(raw_path, index=False)
     table.to_csv(summary_path, index=False)
-    try:
-        md = table.to_markdown(index=False)
-    except Exception:
-        md = table.to_string(index=False)
-    md_path.write_text(md + "\n", encoding="utf-8")
+    md_path.write_text(_to_markdown_table(table) + "\n", encoding="utf-8")
     tex_path.write_text(table.to_latex(index=False, escape=True), encoding="utf-8")
     return {"raw": raw_path, "summary": summary_path, "markdown": md_path, "latex": tex_path}
 

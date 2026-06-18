@@ -9,6 +9,7 @@ build/
 .env
 *.log
 data/raw/
+data/processed/
 results/**/
 !results/.gitkeep
 !results/examples/

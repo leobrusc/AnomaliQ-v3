@@ -18,7 +18,7 @@ def enforce_required_real_dataset(config: dict):
         cicids = dataset.get("cicids", {})
         if bool(cicids.get("require_real_dataset", False)):
             raw_dir = cicids.get("raw_dir", "data/raw/cicids2017")
-            if not list(Path(raw_dir).glob("*.csv")):
+            if not list(Path(raw_dir).rglob("*.csv")):
                 raise FileNotFoundError(
                     "CICIDS2017 dataset not found.\n"
                     "Expected CSV files under:\n"
