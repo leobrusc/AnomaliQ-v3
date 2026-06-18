@@ -11,6 +11,31 @@ from src.evaluation.reproducibility import initialize_experiment
 from src.evaluation.reports import append_rows, record_failure, write_summary
 
 
+def enforce_required_real_dataset(config: dict):
+    dataset = config.get("dataset", {})
+    mode = dataset.get("mode", "synthetic")
+    if mode == "cicids2017":
+        cicids = dataset.get("cicids", {})
+        if bool(cicids.get("require_real_dataset", False)):
+            raw_dir = cicids.get("raw_dir", "data/raw/cicids2017")
+            if not list(Path(raw_dir).glob("*.csv")):
+                raise FileNotFoundError(
+                    "CICIDS2017 dataset not found.\n"
+                    "Expected CSV files under:\n"
+                    "data/raw/cicids2017/*.csv"
+                )
+    if mode == "unsw_nb15":
+        unsw = dataset.get("unsw", {})
+        if bool(unsw.get("require_real_dataset", False)):
+            raw_dir = unsw.get("raw_dir", "data/raw/unsw_nb15")
+            if not list(Path(raw_dir).glob("*.csv")):
+                raise FileNotFoundError(
+                    "UNSW-NB15 dataset not found.\n"
+                    "Expected CSV files under:\n"
+                    "data/raw/unsw_nb15/*.csv"
+                )
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="configs/synthetic.yaml")

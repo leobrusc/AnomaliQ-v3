@@ -11,6 +11,7 @@ dataset:
     normal_labels: [0, Normal, NORMAL]
     attack_labels: [1]
     max_samples_per_class: 1000
+    require_real_dataset: false
     fallback_to_synthetic: true
 preprocessing:
   test_size: 0.3

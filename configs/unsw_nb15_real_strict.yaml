@@ -1,17 +1,18 @@
 seed: 42
 dataset:
-  mode: cicids2017
+  mode: unsw_nb15
   synthetic:
     n_samples: 600
     attack_ratio: 0.35
-  cicids:
-    raw_dir: data/raw/cicids2017
+  unsw:
+    raw_dir: data/raw/unsw_nb15
     processed_dir: data/processed
-    label_column: Label
-    target_labels: [BENIGN, DDoS]
+    label_column: label
+    normal_labels: [0, Normal, NORMAL]
+    attack_labels: [1]
     max_samples_per_class: 1000
-    require_real_dataset: false
-    fallback_to_synthetic: true
+    require_real_dataset: true
+    fallback_to_synthetic: false
 preprocessing:
   test_size: 0.3
   n_qubits: 4

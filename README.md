@@ -72,10 +72,17 @@ O `config_snapshot.yaml` salva uma cópia da configuração usada na execução.
 Para modo real, coloque os CSVs em:
 
 ```text
-data/raw/cicids2017/
+data/raw/cicids2017/*.csv
 ```
 
-Os arquivos devem conter uma coluna `Label` com valores `BENIGN` e `DDoS`. Se os CSVs não existirem, o loader emite aviso no `summary.md` e usa automaticamente o dataset sintético HTTP.
+Os arquivos devem conter uma coluna `Label` com valores `BENIGN` e `DDoS`.
+
+Modo desenvolvimento, com fallback sintético quando os CSVs não existem:
+
+```yaml
+require_real_dataset: false
+fallback_to_synthetic: true
+```
 
 Comando:
 
@@ -83,21 +90,58 @@ Comando:
 python -m src.experiments.run_all --config configs/cicids_ddos.yaml --experiment-name cicids_initial_benchmark
 ```
 
+Modo benchmark real strict, sem fallback:
+
+```yaml
+require_real_dataset: true
+fallback_to_synthetic: false
+```
+
+Comando:
+
+```powershell
+python -m src.experiments.run_all --config configs/cicids_ddos_real_strict.yaml --experiment-name cicids_real_benchmark
+```
+
+Se os CSVs não existirem, a execução deve falhar com mensagem clara indicando `data/raw/cicids2017/*.csv`.
+
 ## Dataset UNSW-NB15
 
 Para modo real, coloque os CSVs em:
 
 ```text
-data/raw/unsw_nb15/
+data/raw/unsw_nb15/*.csv
 ```
 
-O loader aceita coluna binária `label` ou coluna `attack_cat`; tráfego normal vira classe `0` e ataques viram classe `1`. Colunas categóricas são codificadas antes do mapeamento para o contrato comum de features. Se os CSVs não existirem e `fallback_to_synthetic: true`, a execução usa o dataset sintético e registra aviso.
+O loader aceita coluna binária `label` ou coluna `attack_cat`; tráfego normal vira classe `0` e ataques viram classe `1`. Colunas categóricas são codificadas antes do mapeamento para o contrato comum de features.
+
+Modo desenvolvimento, com fallback sintético quando os CSVs não existem:
+
+```yaml
+require_real_dataset: false
+fallback_to_synthetic: true
+```
 
 Comando:
 
 ```powershell
 python -m src.experiments.run_all --config configs/unsw_nb15.yaml --experiment-name unsw_initial_benchmark
 ```
+
+Modo benchmark real strict, sem fallback:
+
+```yaml
+require_real_dataset: true
+fallback_to_synthetic: false
+```
+
+Comando:
+
+```powershell
+python -m src.experiments.run_all --config configs/unsw_nb15_real_strict.yaml --experiment-name unsw_real_benchmark
+```
+
+Se os CSVs não existirem, a execução deve falhar com mensagem clara indicando `data/raw/unsw_nb15/*.csv`.
 
 ## Múltiplas Seeds
 

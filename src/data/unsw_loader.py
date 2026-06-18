@@ -12,6 +12,11 @@ UNSW_HINT = (
     "UNSW-NB15 não encontrado. Coloque os CSVs em data/raw/unsw_nb15/ "
     "com coluna 'label' binária ou 'attack_cat'."
 )
+UNSW_STRICT_MISSING = (
+    "UNSW-NB15 dataset not found.\n"
+    "Expected CSV files under:\n"
+    "data/raw/unsw_nb15/*.csv"
+)
 
 
 def _standardize_column(name: str) -> str:
@@ -36,13 +41,16 @@ def load_unsw_nb15_binary(
     max_samples_per_class: int | None = None,
     processed_dir: str = "data/processed",
     fallback_to_synthetic: bool = True,
+    require_real_dataset: bool = False,
 ) -> tuple[pd.DataFrame, str | None]:
     path = Path(raw_dir)
     csvs = sorted(path.glob("*.csv")) if path.exists() else []
     if not csvs:
+        if require_real_dataset:
+            raise FileNotFoundError(UNSW_STRICT_MISSING)
         if fallback_to_synthetic:
             return generate_synthetic_http(seed=seed), UNSW_HINT
-        raise FileNotFoundError(UNSW_HINT)
+        raise FileNotFoundError(UNSW_STRICT_MISSING)
 
     frames = []
     for csv in csvs:
