@@ -17,3 +17,6 @@ experiments:
   qaoa_nodes: 5
   falqon_windows: 6
   noise_levels: [0.0, 0.05, 0.15, 0.3]
+  vqe:
+    threshold_strategy: validation
+    threshold_percentile: 90

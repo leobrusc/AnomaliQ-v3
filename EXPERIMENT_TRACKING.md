@@ -43,6 +43,14 @@ python -m src.experiments.run_vqc --config configs/synthetic.yaml --experiment-n
 python -m src.experiments.run_vqe --config configs/synthetic.yaml --experiment-name vqe
 python -m src.experiments.run_qaoa --config configs/synthetic.yaml --experiment-name qaoa
 python -m src.experiments.run_falqon --config configs/synthetic.yaml --experiment-name falqon
+python -m src.experiments.run_multiseed --config configs/synthetic.yaml --experiment-name multiseed --seeds 42 123 2026
+```
+
+Datasets reais:
+
+```powershell
+python -m src.experiments.run_all --config configs/cicids_ddos.yaml --experiment-name cicids_initial_benchmark
+python -m src.experiments.run_all --config configs/unsw_nb15.yaml --experiment-name unsw_initial_benchmark
 ```
 
 ## Manifesto
@@ -62,3 +70,12 @@ O ID inclui timestamp UTC, entao uma execucao nova nao sobrescreve a anterior. O
 ## Relacao com resultados antigos
 
 Resultados antigos ainda podem existir diretamente em `results/`. Eles foram mantidos para preservar o historico da fase POC. A partir desta consolidacao, resultados novos devem ser avaliados nos subdiretorios por dataset.
+
+## Interpretacao de resultados
+
+- `metrics.csv` e a tabela principal para comparacao de classificadores.
+- `summary.md` registra avisos, fallbacks e limitacoes da execucao.
+- `config_snapshot.yaml` deve ser usado para reproduzir uma execucao especifica.
+- `experiment_manifest.json` conecta resultado, commit e backend.
+- `artifacts/` contem particionamentos, curvas intermediarias e resultados auxiliares.
+- `plots/` contem figuras geradas automaticamente.

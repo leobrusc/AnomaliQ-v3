@@ -42,7 +42,7 @@ def write_summary(output_dir: str, warnings: list[str] | None = None):
         lines.append("")
     if warnings:
         lines.append("## Avisos")
-        lines.extend(f"- {w}" for w in warnings)
+        lines.extend(f"- {w}" for w in dict.fromkeys(warnings))
         lines.append("")
     lines.append("## Limitações")
     lines.append("- QAE completo e FALQON completo são interfaces POC; quando a dependência quântica não existe, usam fallback documentado.")

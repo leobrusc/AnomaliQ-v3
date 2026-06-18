@@ -50,11 +50,31 @@ Manifesto JSON com:
 
 A configuracao central usa `seed: 42`. Os modelos classicos e selecao de amostras quanticas recebem essa seed quando a biblioteca permite. Algoritmos variacionais e simuladores podem ainda ter pequenas variacoes dependendo de versao de Qiskit, primitivas e backend.
 
+Para rodadas com multiplas seeds:
+
+```powershell
+python -m src.experiments.run_multiseed --config configs/cicids_ddos.yaml --experiment-name cicids_multiseed --seeds 42 123 2026
+```
+
+O script salva `multiseed_all_metrics.csv` e `multiseed_summary.csv` no diretorio agregado. A interpretacao recomendada e reportar media, desvio padrao e teste estatistico pareado quando houver a mesma particao/seeds por modelo.
+
+## Datasets reais
+
+Coloque os arquivos locais em:
+
+```text
+data/raw/cicids2017/*.csv
+data/raw/unsw_nb15/*.csv
+```
+
+Os loaders salvam os dados tratados em `data/processed/`. Quando `fallback_to_synthetic: true`, ausencia de CSVs reais nao quebra a execucao; o aviso fica em `summary.md`.
+
 ## Limites atuais
 
 - O manifesto registra o commit e backend detectado, mas ainda nao salva versoes detalhadas de todas as dependencias.
 - O benchmark NISQ usa Aer quando disponivel, mas a degradacao agregada ainda e medida no pipeline rapido atual.
 - `results/` contem tambem resultados historicos da fase anterior na raiz; novos runners escrevem em `results/<dataset>/<experiment_id>/`.
+- QAE e FALQON ainda sao POCs, nao implementacoes cientificas finais.
 
 ## Recomendacao para publicacao
 
