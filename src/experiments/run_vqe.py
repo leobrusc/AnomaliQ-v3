@@ -7,7 +7,17 @@ from src.quantum.vqe_score import run_vqe_score
 
 def run(config: dict):
     X_train, y_train, X_test, y_test, warnings = prepared_quantum(config)
-    row = run_vqe_score(X_train, X_test, y_train, y_test, int(config.get("preprocessing", {}).get("n_qubits", 4)), float(config.get("experiments", {}).get("alert_threshold", 0.5)))
+    vqe = config.get("experiments", {}).get("vqe", {})
+    row = run_vqe_score(
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        int(config.get("preprocessing", {}).get("n_qubits", 4)),
+        float(config.get("experiments", {}).get("alert_threshold", 0.5)),
+        threshold_strategy=vqe.get("threshold_strategy", "validation"),
+        threshold_percentile=float(vqe.get("threshold_percentile", 90.0)),
+    )
     return [row], warnings
 
 

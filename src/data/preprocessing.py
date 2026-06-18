@@ -8,6 +8,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from src.data.cicids_loader import load_cicids2017_binary
 from src.data.synthetic import FEATURE_COLUMNS, generate_synthetic_http
+from src.data.unsw_loader import load_unsw_nb15_binary
 
 
 def load_dataset(config: dict) -> tuple[pd.DataFrame, list[str]]:
@@ -17,7 +18,28 @@ def load_dataset(config: dict) -> tuple[pd.DataFrame, list[str]]:
     warnings: list[str] = []
     if mode == "cicids2017":
         cicids = dataset.get("cicids", {})
-        df, warning = load_cicids2017_binary(cicids.get("raw_dir", "data/raw/cicids2017"), cicids.get("label_column", "Label"), seed)
+        df, warning = load_cicids2017_binary(
+            raw_dir=cicids.get("raw_dir", "data/raw/cicids2017"),
+            label_column=cicids.get("label_column", "Label"),
+            seed=seed,
+            target_labels=cicids.get("target_labels", ["BENIGN", "DDoS"]),
+            max_samples_per_class=cicids.get("max_samples_per_class"),
+            processed_dir=cicids.get("processed_dir", "data/processed"),
+            fallback_to_synthetic=bool(cicids.get("fallback_to_synthetic", True)),
+        )
+        if warning:
+            warnings.append(warning)
+        return df, warnings
+    if mode == "unsw_nb15":
+        unsw = dataset.get("unsw", {})
+        df, warning = load_unsw_nb15_binary(
+            raw_dir=unsw.get("raw_dir", "data/raw/unsw_nb15"),
+            label_column=unsw.get("label_column", "label"),
+            seed=seed,
+            max_samples_per_class=unsw.get("max_samples_per_class"),
+            processed_dir=unsw.get("processed_dir", "data/processed"),
+            fallback_to_synthetic=bool(unsw.get("fallback_to_synthetic", True)),
+        )
         if warning:
             warnings.append(warning)
         return df, warnings

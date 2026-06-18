@@ -23,7 +23,7 @@ Entregavel: repositorio importavel, lintavel e testavel.
 
 Meta: tornar resultados empiricos defensaveis.
 
-- Implementar normalizacao robusta de colunas CICIDS2017.
+- Validar a normalizacao robusta de colunas CICIDS2017 ja iniciada em `src/data/cicids_loader.py`.
 - Criar manifesto de arquivos aceitos: dia, tipo de ataque, labels esperadas.
 - Criar pipeline `data/processed/cicids_ddos_binary.parquet`.
 - Adicionar split temporal e split estratificado.
@@ -36,6 +36,18 @@ Meta: tornar resultados empiricos defensaveis.
   - features faltantes.
 
 Entregavel: `configs/cicids_ddos.yaml` executa com dataset real sem fallback silencioso quando `strict=true`.
+
+## Fase 2b - Dataset real UNSW-NB15
+
+Meta: ampliar a validacao para um segundo dataset publico de seguranca.
+
+- Validar `src/data/unsw_loader.py` com CSVs reais.
+- Conferir semantica das features mapeadas para o contrato comum.
+- Comparar classificacao binaria `normal` vs `attack`.
+- Avaliar impacto de colunas categoricas codificadas.
+- Rodar protocolo multiseed com `42`, `123`, `2026`.
+
+Entregavel: `configs/unsw_nb15.yaml` executa sem fallback e gera resultados comparaveis aos do CICIDS2017.
 
 ## Fase 3 - QAE real
 
@@ -118,6 +130,7 @@ Meta: gerar pacote reprodutivel para paper.
   - Isolation Forest tuned;
   - AE classico tuned.
 - Reportar media, desvio padrao e intervalos de confianca.
+- Aplicar Wilcoxon para comparacoes pareadas e Friedman para multiplos modelos.
 - Preparar artefatos:
   - tabela LaTeX;
   - figuras finais;

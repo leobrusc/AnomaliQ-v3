@@ -77,6 +77,45 @@ data/raw/cicids2017/
 
 Os arquivos devem conter uma coluna `Label` com valores `BENIGN` e `DDoS`. Se os CSVs não existirem, o loader emite aviso no `summary.md` e usa automaticamente o dataset sintético HTTP.
 
+Comando:
+
+```powershell
+python -m src.experiments.run_all --config configs/cicids_ddos.yaml --experiment-name cicids_initial_benchmark
+```
+
+## Dataset UNSW-NB15
+
+Para modo real, coloque os CSVs em:
+
+```text
+data/raw/unsw_nb15/
+```
+
+O loader aceita coluna binária `label` ou coluna `attack_cat`; tráfego normal vira classe `0` e ataques viram classe `1`. Colunas categóricas são codificadas antes do mapeamento para o contrato comum de features. Se os CSVs não existirem e `fallback_to_synthetic: true`, a execução usa o dataset sintético e registra aviso.
+
+Comando:
+
+```powershell
+python -m src.experiments.run_all --config configs/unsw_nb15.yaml --experiment-name unsw_initial_benchmark
+```
+
+## Múltiplas Seeds
+
+Para avaliação estatística inicial:
+
+```powershell
+python -m src.experiments.run_multiseed --config configs/synthetic.yaml --experiment-name synthetic_multiseed --seeds 42 123 2026
+```
+
+O agregado é salvo em `results/<dataset>/<experiment-name>-aggregate/`. Para publicação, use média/desvio padrão e testes pareados como Wilcoxon; para múltiplos modelos, use Friedman.
+
+## Interpretação
+
+- `metrics.csv` mistura modelos classificatórios e POCs não classificatórias; linhas como QAOA podem ter campos de classificação vazios.
+- VQE produz score contínuo; métricas supervisionadas só são comparáveis quando o score é convertido em rótulo por threshold.
+- QSVM/VQC usam subconjuntos pequenos por custo de simulação.
+- QAE e FALQON ainda são POCs/placeholder funcionais.
+
 ## Saídas
 
 - `results/<dataset>/<experiment_id>/metrics.csv`: métricas de classificação, mitigação e NISQ.
